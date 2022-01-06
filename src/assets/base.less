@@ -1,0 +1,59 @@
+.shadow{
+  box-shadow: 0 4px 8px rgba(0, 0, 0, .06);
+  background: white;
+}
+@primaryColor: cornflowerblue;
+@textColor: #5c5c5c;
+@gray: #f6f6f6;
+
+textarea{
+  resize: none;
+  outline: none;
+  border: none;
+  padding: 8px;
+  font-size: 20px;
+  color: #5c5c5c;
+}
+table {
+  color: @textColor;
+  tr {
+    &:nth-of-type(2n) {
+      background: @gray;
+    }
+    td {
+      font-size: 14px;
+      padding: 8px;
+      select{
+        width: 100%;
+        border: none;
+        padding: 8px 0;
+        background: rgba(0, 0, 0, .04);
+        outline: none;
+      }
+      input{
+        width: 100%;
+        border: none;
+        padding: 8px 0;
+        text-indent: 8px;
+        background: rgba(0, 0, 0, .04);
+        outline: none;
+      }
+      button{
+        cursor: pointer;
+        color: @primaryColor;
+        border: none;
+        padding: 8px 12px;
+        background: rgba(0, 0, 0, .04);
+      }
+      button:hover{
+        color: #9bbfff;
+      }
+      .danger{
+        color: red;
+      }
+      .danger:hover{
+        color: #fc8686;
+      }
+    }
+  }
+}
