@@ -46,16 +46,16 @@
     </tr>
     <tr>
       <td>
-        <input />
+        <input v-model="sharelink" />
       </td>
       <td>
-        <button>添加</button>
+        <button @click="handleAddNode">添加</button>
       </td>
     </tr>
   </table>
 </template>
 <script>
-import { reactive } from "vue";
+import { reactive, ref } from "vue";
 import axios from "axios";
 
 export default {
@@ -64,15 +64,7 @@ export default {
   setup() {
     // 节点列表
     const nodes = reactive([]);
-    const editNode = reactive({
-      proto: "",
-      name: "",
-      from: "",
-      delay: 0,
-      speed: 0,
-      outbound: {},
-      original: "",
-    });
+    const sharelink = ref("");
     // 获取节点
     const getNodes = () => {
       axios.get(`/xray/nodes`).then((res) => {
@@ -102,21 +94,26 @@ export default {
     };
     // 增加节点
     const handleAddNode = () => {
-      console.log(123);
-    };
-    // 保存节点
-    const handleSaveNode = () => {
-      console.log(123);
+      axios
+        .post(`/xray/nodes/add`, {
+          sharelink: sharelink.value,
+        })
+        .then((res) => {
+          if (res.data.code === 0) {
+            nodes.push(...res.data.data);
+            sharelink.value = "";
+          } else {
+            console.log(res.data.msg);
+          }
+        });
     };
 
     return {
       nodes,
       handleDelNode,
       handleTestNode,
-      editNode,
-      handleSaveNode,
       handleAddNode,
-      // 父组件调用
+      sharelink,
       getNodes,
     };
   },

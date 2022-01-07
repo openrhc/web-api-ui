@@ -1,37 +1,41 @@
 <template>
   <table class="shadow">
     <tr>
+      <td>状态</td>
+      <td>
+        <span class="status" :class="{ active: isActive }">
+          {{ isActive ? "运行中" : "已停止" }}
+        </span>
+        <span class="status" :class="{ active: isEnabled }">
+          {{ isEnabled ? "允许自启" : "禁止自启" }}
+        </span>
+        <span class="status active" v-if="version">
+          {{ version }}
+        </span>
+      </td>
+    </tr>
+    <tr>
       <td>服务</td>
       <td>
         <button @click="handleSwitch(0)">开启</button>
         <button @click="handleSwitch(1)">重启</button>
         <button @click="handleSwitch(2)">停止</button>
-        <span class="status" :class="{ active: isActive }">
-          {{ isActive ? "运行中" : "已停止" }}
-        </span>
-        <span class="status" :class="{ active: isEnabled }">
-          {{ isEnabled ? "允许启动" : "禁止自启" }}
-        </span>
       </td>
     </tr>
     <tr>
       <td>主节点</td>
       <td>
         <select @change="handleMainNodeChange" v-model="mainNodeIndex">
-          <option v-if="nodes.length === 0" value="-1" >请先更新订阅</option>
-          <option v-else-if="mainNodeIndex === -1" value="-1">请选择一个主节点</option>
+          <option v-if="nodes.length === 0" value="-1">请先更新订阅</option>
+          <option v-else-if="mainNodeIndex === -1" value="-1">
+            请选择一个主节点
+          </option>
           <option v-for="(n, i) in nodes" :key="i" :value="i">
             {{ n.from }} - {{ n.name }}
             {{ n.delay === 0 ? "" : "(" + n.delay + " ms" }}
             {{ n.speed === 0 ? "" : n.speed + " MiB/s )" }}
           </option>
         </select>
-      </td>
-    </tr>
-    <tr>
-      <td>配置文件</td>
-      <td>
-        <button @click="generateconfig">重新生成配置文件</button>
       </td>
     </tr>
   </table>
@@ -48,6 +52,7 @@ export default {
     const mainNodeIndex = ref(-1);
     const isActive = ref(false);
     const isEnabled = ref(false);
+    const version = ref("");
 
     // 生成配置并保存
     const generateconfig = () => {
@@ -64,6 +69,7 @@ export default {
       const action = ["start", "restart", "stop"];
       axios.get(`/xray/service/${action[i]}`).then((res) => {
         console.log(res.data.msg);
+        isActive.value = i !== 2;
       });
     };
     // 切换主节点
@@ -83,9 +89,10 @@ export default {
     // 获取服务状态
     const getServiceStatus = () => {
       axios.get(`/xray/service/status`).then((res) => {
-        const { active, enabled } = res.data.data;
+        const { active, enabled, version: _version } = res.data.data;
         isActive.value = active;
         isEnabled.value = enabled;
+        version.value = 'v' + _version;
       });
     };
 
@@ -98,6 +105,7 @@ export default {
     return {
       isActive,
       isEnabled,
+      version,
       generateconfig,
       nodes,
       mainNodeIndex,
@@ -111,10 +119,10 @@ export default {
 
 <style lang="less" scoped>
 .status {
-  font-size: 14px;
+  font-size: 12px;
   color: gray;
   padding: 0 4px;
-  margin-left: 16px;
+  margin-right: 16px;
   border: 1px solid gray;
 }
 .active {

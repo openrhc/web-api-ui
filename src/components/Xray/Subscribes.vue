@@ -31,10 +31,14 @@
         <button @click="handleUpdateSub(i)">更新订阅</button>
       </td>
       <td>
+        <button class="normal" @click="handleEmptySub(i)">清空</button>
         <button class="danger" @click="handleDelSub(i)">删除</button>
-      </td>
-      <td v-show="s.name !== s.editname || s.url !== s.editurl">
-        <button @click="handleSaveSub(i)">保存</button>
+        <button
+          v-show="s.name !== s.editname || s.url !== s.editurl"
+          @click="handleSetSub(i)"
+        >
+          保存
+        </button>
       </td>
     </tr>
   </table>
@@ -116,7 +120,7 @@ export default {
         });
     };
     // 保存订阅修改
-    const handleSaveSub = (i) => {
+    const handleSetSub = (i) => {
       axios
         .get(`/xray/subscribe/${i}/set`, {
           params: {
@@ -137,6 +141,12 @@ export default {
         subscribes.splice(i, 1);
       });
     };
+    // 清空订阅
+    const handleEmptySub = (i) => {
+      axios.get(`/xray/subscribe/${i}/empty`).then((res) => {
+        console.log(res.data.msg);
+      });
+    };
     // 更新订阅
     const handleUpdateSub = (i) => {
       axios.get(`/xray/subscribe/${i}/update`).then((res) => {
@@ -151,8 +161,9 @@ export default {
       newSub,
       handleAddSub,
       handleDelSub,
-      handleSaveSub,
+      handleSetSub,
       handleUpdateSub,
+      handleEmptySub,
       getSubscribes,
     };
   },

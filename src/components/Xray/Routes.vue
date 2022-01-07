@@ -29,8 +29,8 @@
     <tr>
       <td></td>
       <td>规则</td>
-      <td>入口</td>
-      <td>出口</td>
+      <td>入站</td>
+      <td>出站</td>
       <td>备注</td>
       <td>操作</td>
     </tr>
@@ -103,14 +103,25 @@
       </td>
       <td>
         <button class="danger" @click="handleDelRoute(i)">删除</button>
+        <button
+          v-show="
+            r.editrule !== r.rule ||
+            r.editoutboundtag !== r.outboundTag ||
+            r.editvalue !== r.value ||
+            r.editdesp !== r.desp
+          "
+          @click="handleSetRoute(i)"
+        >
+          保存
+        </button>
       </td>
     </tr>
   </table>
   <table class="shadow">
     <tr>
       <td>规则</td>
-      <td>值</td>
-      <td>出口</td>
+      <td>入站</td>
+      <td>出站</td>
       <td>备注</td>
     </tr>
     <tr>
@@ -199,6 +210,7 @@ export default {
           }
           return {
             ...v,
+            value,
             editoutboundtag: v.outboundTag,
             editdesp: v.desp,
             editrule: v.rule,
@@ -236,10 +248,7 @@ export default {
       }
       axios
         .get(`/xray/route/${routes.length}/set`, {
-          params: {
-            idx: routes.length,
-            ...newRoute,
-          },
+          params: newRoute,
         })
         .then((res) => {
           if (res.data.code === 0) {
@@ -258,6 +267,29 @@ export default {
             newRoute.desp = "";
             newRoute.rule = "domain";
             newRoute.value = "";
+          } else {
+            alert(res.data.msg);
+          }
+        });
+    };
+
+    // 设置分流
+    const handleSetRoute = (i) => {
+      axios
+        .get(`/xray/route/${i}/set`, {
+          params: {
+            outboundTag: routes[i].editoutboundtag,
+            desp: routes[i].editdesp,
+            rule: routes[i].editrule,
+            value: routes[i].editvalue,
+          },
+        })
+        .then((res) => {
+          if (res.data.code === 0) {
+            routes[i].outboundTag = routes[i].editoutboundtag;
+            routes[i].desp = routes[i].editdesp;
+            routes[i].rule = routes[i].editrule;
+            routes[i].value = routes[i].editvalue;
           } else {
             alert(res.data.msg);
           }
@@ -359,6 +391,7 @@ export default {
       type,
       handleDelRoute,
       handleAddRoute,
+      handleSetRoute,
       newRoute,
       getRoutes,
       handleDirectChange,
