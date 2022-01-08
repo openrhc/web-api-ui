@@ -61,7 +61,7 @@ export default {
           {
             id: 0,
             name: "代理服务器",
-            to: "/service/xray",
+            to: "/service/proxy",
           },
         ],
       },
@@ -74,7 +74,7 @@ export default {
     ];
     return {
       navList,
-      version: "版本：1.0",
+      version: "版本: 1.0",
     };
   },
 };

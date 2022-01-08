@@ -2,7 +2,7 @@ module.exports = {
     publicPath: '.',
     devServer: {
         proxy: {
-            '/xray': {
+            '/proxy': {
                 target: 'http://192.168.0.10:7788/',
                 changeOrigin: true
             }

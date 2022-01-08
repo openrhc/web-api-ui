@@ -67,21 +67,21 @@ export default {
     const sharelink = ref("");
     // 获取节点
     const getNodes = () => {
-      axios.get(`/xray/nodes`).then((res) => {
+      axios.get(`/proxy/nodes`).then((res) => {
         nodes.splice(0);
         nodes.push(...res.data.data);
       });
     };
     // 删除节点
     const handleDelNode = (i) => {
-      axios.get(`/xray/node/${i}/del`).then(() => {
+      axios.get(`/proxy/node/${i}/del`).then(() => {
         nodes.splice(i, 1);
       });
     };
     // 测试节点
     const handleTestNode = (i) => {
       nodes[i].tips = "Loading...";
-      axios.get(`/xray/node/${i}/test`).then((res) => {
+      axios.get(`/proxy/node/${i}/test`).then((res) => {
         if (res.data.code === 0) {
           const { delay, speed } = res.data.data;
           nodes[i].delay = delay;
@@ -95,7 +95,7 @@ export default {
     // 增加节点
     const handleAddNode = () => {
       axios
-        .post(`/xray/nodes/add`, {
+        .post(`/proxy/nodes/add`, {
           sharelink: sharelink.value,
         })
         .then((res) => {

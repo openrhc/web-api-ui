@@ -13,16 +13,16 @@
   </div>
   <div class="content">
     <div v-show="navIndex === 0">
-      <XrayBaseSetting ref="xrayBaseSetting" />
+      <ProxyBaseSetting ref="proxyBaseSetting" />
     </div>
     <div v-show="navIndex === 1">
-      <XraySubscribes ref="xraySubscribes" />
+      <ProxySubscribes ref="proxySubscribes" />
     </div>
     <div v-show="navIndex === 2">
-      <XrayNodes ref="xrayNodes" />
+      <ProxyNodes ref="proxyNodes" />
     </div>
     <div v-show="navIndex === 3">
-      <XrayRoutes ref="xrayRoutes" />
+      <ProxyRoutes ref="proxyRoutes" />
     </div>
   </div>
 </template>
@@ -30,27 +30,27 @@
 import { ref, watchEffect } from "vue";
 import { useRoute } from "vue-router";
 
-import XrayBaseSetting from "@/components/Xray/BaseSetting.vue";
-import XraySubscribes from "@/components/Xray/Subscribes.vue";
-import XrayNodes from "@/components/Xray/Nodes.vue";
-import XrayRoutes from "@/components/Xray/Routes.vue";
+import ProxyBaseSetting from "@/components/Proxy/BaseSetting.vue";
+import ProxySubscribes from "@/components/Proxy/Subscribes.vue";
+import ProxyNodes from "@/components/Proxy/Nodes.vue";
+import ProxyRoutes from "@/components/Proxy/Routes.vue";
 
 export default {
-  name: "Xray",
+  name: "Proxy",
   components: {
-    XrayBaseSetting,
-    XraySubscribes,
-    XrayNodes,
-    XrayRoutes,
+    ProxyBaseSetting,
+    ProxySubscribes,
+    ProxyNodes,
+    ProxyRoutes,
   },
   setup() {
     const route = useRoute();
     const queryNavIndex = Number(route.query.nav) || 0;
 
-    const xrayBaseSetting = ref(null);
-    const xrayNodes = ref(null);
-    const xraySubscribes = ref(null);
-    const xrayRoutes = ref(null);
+    const proxyBaseSetting = ref(null);
+    const proxyNodes = ref(null);
+    const proxySubscribes = ref(null);
+    const proxyRoutes = ref(null);
 
     // 导航列表
     const navs = [
@@ -58,7 +58,7 @@ export default {
       "订阅列表",
       "节点列表",
       "分流策略",
-      "DNS服务器",
+      // "DNS服务器",
       // "高级设置",
       // "透明代理",
     ];
@@ -66,27 +66,27 @@ export default {
     const navIndex = ref(queryNavIndex);
 
     watchEffect(() => {
-      if (navIndex.value === 0 && xrayBaseSetting.value) {
-        xrayBaseSetting.value.refreshData();
+      if (navIndex.value === 0 && proxyBaseSetting.value) {
+        proxyBaseSetting.value.refreshData();
       }
-      if (navIndex.value === 1 && xraySubscribes.value) {
-        xraySubscribes.value.getSubscribes();
+      if (navIndex.value === 1 && proxySubscribes.value) {
+        proxySubscribes.value.getSubscribes();
       }
-      if (navIndex.value === 2 && xrayNodes.value) {
-        xrayNodes.value.getNodes();
+      if (navIndex.value === 2 && proxyNodes.value) {
+        proxyNodes.value.getNodes();
       }
-      if (navIndex.value === 3 && xrayRoutes.value) {
-        xrayRoutes.value.getRoutes();
+      if (navIndex.value === 3 && proxyRoutes.value) {
+        proxyRoutes.value.getRoutes();
       }
     });
 
     return {
       navs,
       navIndex,
-      xrayBaseSetting,
-      xraySubscribes,
-      xrayNodes,
-      xrayRoutes,
+      proxyBaseSetting,
+      proxySubscribes,
+      proxyNodes,
+      proxyRoutes,
     };
   },
 };

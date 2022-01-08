@@ -5,7 +5,7 @@ import Network from '../views/Network.vue'
 import Service from '../views/Service.vue'
 import Settings from '../views/Settings.vue'
 
-import ServiceXray from '../views/Service/Xray.vue'
+import ServiceProxy from '../views/Service/Proxy.vue'
 
 const routes = [
   {
@@ -29,8 +29,8 @@ const routes = [
     component: Service,
     children: [
       {
-        path: '/service/xray',
-        component: ServiceXray
+        path: '/service/proxy',
+        component: ServiceProxy
       }
     ]
   },

@@ -176,7 +176,7 @@ export default {
     const nodes = reactive([]);
     const routes = reactive([]);
     const newRoute = reactive({
-      outboundTag: "",
+      outboundTag: "direct",
       desp: "",
       rule: "domain",
       value: "",
@@ -186,7 +186,7 @@ export default {
     const toIndex = ref(-1);
     // 获取分流规则
     const getRoutes = () => {
-      axios.get(`/xray/routes`).then((res) => {
+      axios.get(`/proxy/routes`).then((res) => {
         nodes.splice(0);
         routes.splice(0);
         const {
@@ -227,7 +227,7 @@ export default {
 
     // 删除分流规则
     const handleDelRoute = (i) => {
-      axios.get(`/xray/route/${i}/del`).then((res) => {
+      axios.get(`/proxy/route/${i}/del`).then((res) => {
         if (res.data.code === 0) {
           routes.splice(i, 1);
         } else {
@@ -247,7 +247,7 @@ export default {
         return;
       }
       axios
-        .get(`/xray/route/${routes.length}/set`, {
+        .get(`/proxy/route/${routes.length}/set`, {
           params: newRoute,
         })
         .then((res) => {
@@ -276,7 +276,7 @@ export default {
     // 设置分流
     const handleSetRoute = (i) => {
       axios
-        .get(`/xray/route/${i}/set`, {
+        .get(`/proxy/route/${i}/set`, {
           params: {
             outboundTag: routes[i].editoutboundtag,
             desp: routes[i].editdesp,
@@ -302,7 +302,7 @@ export default {
         return;
       }
       axios
-        .get(`/xray/directlist/set`, {
+        .get(`/proxy/directlist/set`, {
           params: {
             list: directList.value,
           },
@@ -322,7 +322,7 @@ export default {
         return;
       }
       axios
-        .get(`/xray/proxylist/set`, {
+        .get(`/proxy/proxylist/set`, {
           params: {
             list: proxyList.value,
           },
@@ -342,7 +342,7 @@ export default {
         return;
       }
       axios
-        .get(`/xray/blocklist/set`, {
+        .get(`/proxy/blocklist/set`, {
           params: {
             list: blockList.value,
           },
@@ -372,7 +372,7 @@ export default {
         return;
       }
       axios
-        .get(`/xray/routes/sort?from=${fromIndex.value}&to=${toIndex.value}`)
+        .get(`/proxy/routes/sort?from=${fromIndex.value}&to=${toIndex.value}`)
         .then((res) => {
           console.log(res.data.msg);
           const tmp = routes.splice(fromIndex.value, 1);

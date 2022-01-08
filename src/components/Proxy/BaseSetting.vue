@@ -56,7 +56,7 @@ export default {
 
     // 生成配置并保存
     const generateconfig = () => {
-      axios.get(`/xray/config/save`).then((res) => {
+      axios.get(`/proxy/config/save`).then((res) => {
         if (res.data.code === 0) {
           console.log("ok");
         } else {
@@ -67,20 +67,20 @@ export default {
     // 启动/重启/关闭服务
     const handleSwitch = (i) => {
       const action = ["start", "restart", "stop"];
-      axios.get(`/xray/service/${action[i]}`).then((res) => {
+      axios.get(`/proxy/service/${action[i]}`).then((res) => {
         console.log(res.data.msg);
         isActive.value = i !== 2;
       });
     };
     // 切换主节点
     const handleMainNodeChange = () => {
-      axios.get(`/xray/mainnode/set?id=${mainNodeIndex.value}`).then((res) => {
+      axios.get(`/proxy/mainnode/set?id=${mainNodeIndex.value}`).then((res) => {
         console.log(res.data.msg);
       });
     };
     // 获取节点
     const getNodes = () => {
-      axios.get(`/xray/nodes`).then((res) => {
+      axios.get(`/proxy/nodes`).then((res) => {
         nodes.splice(0);
         nodes.push(...res.data.data);
         mainNodeIndex.value = nodes.findIndex((v) => v.active);
@@ -88,11 +88,11 @@ export default {
     };
     // 获取服务状态
     const getServiceStatus = () => {
-      axios.get(`/xray/service/status`).then((res) => {
+      axios.get(`/proxy/service/status`).then((res) => {
         const { active, enabled, version: _version } = res.data.data;
         isActive.value = active;
         isEnabled.value = enabled;
-        version.value = 'v' + _version;
+        version.value = _version;
       });
     };
 

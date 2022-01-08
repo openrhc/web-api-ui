@@ -78,7 +78,7 @@ export default {
     });
     // 获取订阅
     const getSubscribes = () => {
-      axios.get(`/xray/subscribes`).then((res) => {
+      axios.get(`/proxy/subscribes`).then((res) => {
         subscribes.splice(0);
         const tmp = res.data.data.map((v) => {
           return {
@@ -101,7 +101,7 @@ export default {
         return alert("换个名称");
       }
       axios
-        .get(`/xray/subscribe/${subscribes.length}/set`, {
+        .get(`/proxy/subscribe/${subscribes.length}/set`, {
           params: {
             name: newSub.name,
             url: newSub.url,
@@ -122,7 +122,7 @@ export default {
     // 保存订阅修改
     const handleSetSub = (i) => {
       axios
-        .get(`/xray/subscribe/${i}/set`, {
+        .get(`/proxy/subscribe/${i}/set`, {
           params: {
             name: subscribes[i].editname,
             url: subscribes[i].editurl,
@@ -137,19 +137,19 @@ export default {
     };
     // 删除订阅
     const handleDelSub = (i) => {
-      axios.get(`/xray/subscribe/${i}/del`).then(() => {
+      axios.get(`/proxy/subscribe/${i}/del`).then(() => {
         subscribes.splice(i, 1);
       });
     };
     // 清空订阅
     const handleEmptySub = (i) => {
-      axios.get(`/xray/subscribe/${i}/empty`).then((res) => {
+      axios.get(`/proxy/subscribe/${i}/empty`).then((res) => {
         console.log(res.data.msg);
       });
     };
     // 更新订阅
     const handleUpdateSub = (i) => {
-      axios.get(`/xray/subscribe/${i}/update`).then((res) => {
+      axios.get(`/proxy/subscribe/${i}/update`).then((res) => {
         if (res.data.code !== 0) {
           alert(res.data.msg);
         }
