@@ -440,12 +440,14 @@ table {
       max-width: 260px;
     }
   }
-  .dragactive {
-    color: white;
-    background: @primaryColor !important;
-  }
-  .dragfrom {
-    background: rgba(0, 0, 0, 0.2) !important;
+}
+@media screen and (max-width: 768px) {
+  .routing {
+    display: flex;
+    flex-direction: column;
+    .routing_item {
+      margin: 8px 0 !important;
+    }
   }
 }
 </style>

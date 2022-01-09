@@ -174,4 +174,12 @@ export default {
 table {
   margin-bottom: 16px;
 }
+@media screen and (max-width: 768px) {
+  .content {
+    overflow: auto;
+    table {
+      min-width: 600px;
+    }
+  }
+}
 </style>

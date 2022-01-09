@@ -121,4 +121,10 @@ export default {
     margin-top: 16px;
   }
 }
+
+@media screen and (max-width: 768px) {
+  .content{
+    overflow: auto;
+  }
+}
 </style>

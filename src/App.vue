@@ -1,9 +1,12 @@
 <template>
-  <div id="nav">
-    <div id="logo"></div>
-
+  <div id="nav" :class="{ show: showNav }">
+    <div class="logo"></div>
     <div class="nav_item" v-for="nav in navList" :key="nav.id">
-      <router-link :to="nav.to" class="item_link">
+      <router-link
+        :to="nav.to"
+        class="item_link"
+        @click="showNav = nav.children !== undefined"
+      >
         <div class="link_icon">{{ nav.icon }}</div>
         <div class="link_name">{{ nav.name }}</div>
       </router-link>
@@ -17,22 +20,28 @@
           v-for="c in nav.children"
           :key="c.id"
           :to="c.to"
+          @click="showNav = false"
         >
           {{ c.name }}
         </router-link>
       </div>
     </div>
-
     <div id="version">{{ version }}</div>
+  </div>
+  <div class="nav_mobile">
+    <div class="mask" v-show="showNav" @click="showNav = false"></div>
+    <div class="logo" @click="showNav = true"></div>
   </div>
   <router-view class="view"></router-view>
 </template>
 
 <script>
+import { ref } from "vue";
 export default {
   name: "App",
   components: {},
   setup() {
+    const showNav = ref(false);
     const navList = [
       {
         id: 0,
@@ -72,9 +81,14 @@ export default {
         to: "/settings",
       },
     ];
+    const handleClick = (e) => {
+      console.log(e.target);
+    };
     return {
       navList,
       version: "版本: 1.0",
+      handleClick,
+      showNav,
     };
   },
 };
@@ -88,13 +102,16 @@ body {
 #app {
   display: flex;
 }
-#logo {
+.logo {
   width: 100%;
   height: 120px;
   background-color: white;
   background: url(./assets/logo_head.png) no-repeat;
   background-size: 100% auto;
   background-position: center;
+}
+#nav_menu {
+  display: none;
 }
 #nav {
   height: 100vh;
@@ -104,6 +121,7 @@ body {
   background: white;
   z-index: 999;
   box-shadow: 4px 0 8px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s;
 }
 .nav_item {
   margin: 8px 16px;
@@ -164,5 +182,42 @@ body {
   background: @gray;
   height: 100vh;
   overflow-y: auto;
+}
+
+.nav_mobile {
+  display: none;
+  align-items: center;
+  z-index: 99;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  .mask {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    background: rgba(0, 0, 0, 0.2);
+    z-index: 98;
+  }
+  .logo {
+    width: 120px;
+    height: 56px;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  #app {
+    flex-direction: column;
+  }
+  #nav {
+    position: absolute;
+    transform: translateX(-100%);
+    box-shadow: none;
+  }
+  .show {
+    transform: translateX(0%) !important;
+  }
+  .nav_mobile {
+    display: flex;
+  }
 }
 </style>

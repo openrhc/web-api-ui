@@ -9,7 +9,19 @@
       <td>测速</td>
       <td>操作</td>
     </tr>
-    <tr v-for="(n, i) in nodes" :key="i" :class="{ active: n.active }">
+    <tr
+      v-for="(n, i) in nodes"
+      :key="i"
+      :class="{
+        active: n.active,
+        dragactive: i === toIndex,
+        dragfrom: i === fromIndex,
+      }"
+      draggable="true"
+      @dragstart="handleDragStart(i)"
+      @dragenter="handleDragEnter(i)"
+      @dragend="handleDragEnd(i)"
+    >
       <td>
         {{ i + 1 }}
       </td>
@@ -65,6 +77,9 @@ export default {
     // 节点列表
     const nodes = reactive([]);
     const sharelink = ref("");
+    // 拖动
+    const fromIndex = ref(-1);
+    const toIndex = ref(-1);
     // 获取节点
     const getNodes = () => {
       axios.get(`/proxy/nodes`).then((res) => {
@@ -108,6 +123,30 @@ export default {
         });
     };
 
+    // 拖动开始
+    const handleDragStart = (i) => {
+      fromIndex.value = i;
+    };
+    const handleDragEnter = (i) => {
+      toIndex.value = i;
+    };
+    // 拖动结束
+    const handleDragEnd = () => {
+      if (fromIndex.value === toIndex.value) {
+        fromIndex.value = -1;
+        toIndex.value = -1;
+        return;
+      }
+      axios
+        .get(`/proxy/nodes/sort?from=${fromIndex.value}&to=${toIndex.value}`)
+        .then((res) => {
+          console.log(res.data.msg);
+          const tmp = nodes.splice(fromIndex.value, 1);
+          nodes.splice(toIndex.value, 0, ...tmp);
+          fromIndex.value = -1;
+          toIndex.value = -1;
+        });
+    };
     return {
       nodes,
       handleDelNode,
@@ -115,6 +154,11 @@ export default {
       handleAddNode,
       sharelink,
       getNodes,
+      fromIndex,
+      toIndex,
+      handleDragStart,
+      handleDragEnter,
+      handleDragEnd,
     };
   },
 };
@@ -131,5 +175,13 @@ export default {
 }
 table {
   margin-bottom: 16px;
+}
+@media screen and (max-width: 768px) {
+  .content {
+    overflow: auto;
+    table {
+      min-width: 600px;
+    }
+  }
 }
 </style>
