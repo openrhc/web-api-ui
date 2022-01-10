@@ -2,40 +2,53 @@
   <div class="status">
     <div class="cell shadow">
       <div class="title">系统</div>
-      <table>
+      <table v-if="system.info">
         <tr>
           <td>主机名</td>
-          <td>{{ system.hostname }}</td>
+          <td>{{ system.info.hostname }}</td>
         </tr>
         <tr>
           <td>CPU信息</td>
-          <td>{{ system.cpus.length }} 核</td>
+          <td>{{ system.info.cpus.length }} 核</td>
         </tr>
         <tr>
           <td>内存信息</td>
-          <td>{{ Math.round(system.totalmem / 1000000000) }} G</td>
+          <td>{{ Math.round(system.info.totalmem / 1000000000) }} G</td>
         </tr>
         <tr>
           <td>内核版本</td>
-          <td>{{ system.type }}  {{ system.release }}</td>
+          <td>{{ system.info.type }} {{ system.info.release }}</td>
         </tr>
         <tr>
           <td>运行时间</td>
-          <td>{{ system.uptime }}</td>
+          <td>{{ formatTime(system.info.uptime) }}</td>
         </tr>
         <tr>
           <td>平均负载</td>
-          <td>{{ system.loadavg.join(', ') }}</td>
+          <td>{{ system.info.loadavg.join("&nbsp;&nbsp;") }}</td>
         </tr>
       </table>
     </div>
 
     <div class="cell shadow">
       <div class="title">内存</div>
-      <table>
-        <tr v-for="v in systemMem" :key="v.k">
-          <td>{{ v.desp }}</td>
-          <td>{{ v.v }}</td>
+      <table v-if="system.mem">
+        <tr>
+          <td>使用率</td>
+          <td>
+            <ProgressBar :max="system.mem.total" :value="system.mem.used" />
+          </td>
+        </tr>
+      </table>
+      <table v-else>
+        <tr>
+          <td>使用率</td>
+          <td>
+            <ProgressBar
+              :max="system.info.totalmem"
+              :value="system.info.totalmem - system.info.freemem"
+            />
+          </td>
         </tr>
       </table>
     </div>
@@ -43,107 +56,48 @@
 </template>
 
 <script>
+import { reactive } from "vue";
+import axios from "axios";
+import ProgressBar from "@/components/ProgressBar.vue";
+
 export default {
   name: "Status",
-  components: {},
+  components: {
+    ProgressBar,
+  },
   setup() {
     // 基本信息
-    const system = {
-      arch: "arm64",
-      freemem: 1123536896,
-      totalmem: 2021146624,
-      release: "5.14.15-openrhc",
-      uptime: 6129.65,
-      platform: "linux",
-      cpus: [
-        {
-          model: "unknown",
-          speed: 1000,
-          times: {
-            user: 227890,
-            nice: 0,
-            sys: 86910,
-            idle: 5656330,
-            irq: 42160,
-          },
-        },
-        {
-          model: "unknown",
-          speed: 1000,
-          times: {
-            user: 237430,
-            nice: 0,
-            sys: 76860,
-            idle: 5588980,
-            irq: 48380,
-          },
-        },
-        {
-          model: "unknown",
-          speed: 1000,
-          times: {
-            user: 276100,
-            nice: 0,
-            sys: 80800,
-            idle: 5699850,
-            irq: 21700,
-          },
-        },
-        {
-          model: "unknown",
-          speed: 1000,
-          times: {
-            user: 262370,
-            nice: 0,
-            sys: 76100,
-            idle: 5729020,
-            irq: 19310,
-          },
-        },
-      ],
-      loadavg: [0.12, 0.2, 0.18],
-      hostname: "alarm",
-      networkInterfaces: {
-        lo: [
-          {
-            address: "127.0.0.1",
-            netmask: "255.0.0.0",
-            family: "IPv4",
-            mac: "00:00:00:00:00:00",
-            internal: true,
-            cidr: "127.0.0.1/8",
-          },
-        ],
-        eth0: [
-          {
-            address: "192.168.0.10",
-            netmask: "255.255.255.0",
-            family: "IPv4",
-            mac: "02:d8:d7:71:09:f4",
-            internal: false,
-            cidr: "192.168.0.10/24",
-          },
-        ],
-      },
-      version: "#1 SMP PREEMPT Thu Oct 28 01:37:07 CST 2021",
-      type: "Linux",
+    const system = reactive({
+      info: null,
+      mem: null,
+    });
+    const getStatus = () => {
+      axios.get("http://192.168.0.10:7788/system/status").then((res) => {
+        system.info = res.data.data;
+        if (res.data.data.mem) {
+          const { MemTotal, Shmem, MemFree, Buffers, Cached, SReclaimable } =
+            res.data.data.mem;
+          system.mem = {};
+          system.mem.total = MemTotal;
+          system.mem.free = MemFree;
+          system.mem.used =
+            MemTotal + Shmem - MemFree - Buffers - Cached - SReclaimable;
+        }
+      });
     };
-    // 内存信息
-    const systemMem = [
-      {
-        desp: "可用数",
-        k: "s",
-        v: [847, 999],
-      },
-      {
-        desp: "已缓存",
-        k: "a",
-        v: [4, 999],
-      },
-    ];
+    const formatTime = (s) => {
+      const day = Math.floor(s / 86400);
+      s = s - day * 86400;
+      const hour = Math.floor(s / 3600);
+      s = s - hour * 3600;
+      const min = Math.floor(s / 60);
+      s = Math.floor(s - min * 60);
+      return day + "d " + hour + "h " + min + "m " + s + "s";
+    };
+    getStatus();
     return {
       system,
-      systemMem,
+      formatTime,
     };
   },
 };

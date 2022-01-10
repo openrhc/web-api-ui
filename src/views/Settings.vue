@@ -16,14 +16,19 @@
         </td>
       </tr>
     </table>
+    <ProgressBar :max="100" :value="20" />
   </div>
 </template>
 
 <script>
 import { reactive, ref } from "vue";
+import ProgressBar from "@/components/ProgressBar.vue";
 
 export default {
   name: "Settings",
+  components: {
+    ProgressBar,
+  },
   setup() {
     const currentIndex = ref(-1);
     const startIndex = ref(-1);
@@ -65,6 +70,6 @@ export default {
   background: skyblue;
 }
 .dragfrom {
-  background: rgba(0, 0, 0, .2);
+  background: rgba(0, 0, 0, 0.2);
 }
 </style>

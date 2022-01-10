@@ -30,7 +30,26 @@
   </div>
   <div class="nav_mobile">
     <div class="mask" v-show="showNav" @click="showNav = false"></div>
-    <div class="logo" @click="showNav = true"></div>
+    <router-link to="/">
+      <div class="logo"></div>
+    </router-link>
+    <svg
+      t="1641785791941"
+      class="icon nav_menu"
+      viewBox="0 0 1024 1024"
+      version="1.1"
+      xmlns="http://www.w3.org/2000/svg"
+      p-id="2131"
+      width="32"
+      height="32"
+      @click="showNav = true"
+    >
+      <path
+        d="M195.584 245.76h571.392A31.66208 31.66208 0 0 1 798.72 277.36064v15.79008a31.66208 31.66208 0 0 1-31.744 31.60064H195.584A31.66208 31.66208 0 0 1 163.84 293.15072v-15.79008A31.66208 31.66208 0 0 1 195.584 245.76z m0 236.97408H608.256a31.66208 31.66208 0 0 1 31.744 31.60064v15.79008a31.66208 31.66208 0 0 1-31.744 31.60064H195.584A31.66208 31.66208 0 0 1 163.84 530.14528v-15.81056a31.66208 31.66208 0 0 1 31.744-31.60064z m0 236.97408h571.392A31.68256 31.68256 0 0 1 798.72 751.32928v15.81056A31.66208 31.66208 0 0 1 766.976 798.72H195.584A31.66208 31.66208 0 0 1 163.84 767.11936v-15.79008a31.66208 31.66208 0 0 1 31.744-31.60064z"
+        p-id="2132"
+        fill="#707070"
+      ></path>
+    </svg>
   </div>
   <router-view class="view"></router-view>
 </template>
@@ -201,6 +220,10 @@ body {
   .logo {
     width: 120px;
     height: 56px;
+  }
+  .nav_menu {
+    margin-left: auto;
+    margin-right: 16px;
   }
 }
 
