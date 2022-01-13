@@ -47,6 +47,7 @@
         <button @click="handleTestNode(i)">测试</button>
       </td>
       <td>
+        <button @click="handleSwitchNode(i)">切换</button>
         <button class="danger" @click="handleDelNode(i)">删除</button>
       </td>
     </tr>
@@ -91,6 +92,19 @@ export default {
     const handleDelNode = (i) => {
       axios.get(`/proxy/node/${i}/del`).then(() => {
         nodes.splice(i, 1);
+      });
+    };
+    // 切换主节点
+    const handleSwitchNode = (i) => {
+      axios.get(`/proxy/mainnode/set?id=${i}`).then((res) => {
+        if (res.data.code === 0) {
+          console.log(res.data.msg);
+          const old = nodes.find((v) => v.active);
+          if (old) {
+            old.active = false;
+          }
+          nodes[i].active = true;
+        }
       });
     };
     // 测试节点
@@ -152,6 +166,7 @@ export default {
       handleDelNode,
       handleTestNode,
       handleAddNode,
+      handleSwitchNode,
       sharelink,
       getNodes,
       fromIndex,
