@@ -4,6 +4,8 @@
       <td></td>
       <td>名称</td>
       <td>订阅地址</td>
+      <td>包含关键词（|）</td>
+      <td>排除关键词（|）</td>
       <td>更新</td>
       <td>操作</td>
     </tr>
@@ -27,6 +29,22 @@
           @blur="s.showurl = true"
         />
       </td>
+      <td @dblclick="s.showinclude = false">
+        <div v-show="s.showinclude">{{ s.editinclude }}</div>
+        <input
+          v-show="!s.showinclude"
+          v-model="s.editinclude"
+          @blur="s.showinclude = true"
+        />
+      </td>
+      <td @dblclick="s.showexclude = false">
+        <div v-show="s.showexclude">{{ s.editexclude }}</div>
+        <input
+          v-show="!s.showexclude"
+          v-model="s.editexclude"
+          @blur="s.showexclude = true"
+        />
+      </td>
       <td>
         <button @click="handleUpdateSub(i)">更新订阅</button>
       </td>
@@ -34,7 +52,12 @@
         <button class="normal" @click="handleEmptySub(i)">清空</button>
         <button class="danger" @click="handleDelSub(i)">删除</button>
         <button
-          v-show="s.name !== s.editname || s.url !== s.editurl"
+          v-show="
+            s.name !== s.editname ||
+            s.url !== s.editurl ||
+            s.include !== s.editinclude ||
+            s.exclude !== s.editexclude
+          "
           @click="handleSetSub(i)"
         >
           保存
@@ -75,6 +98,8 @@ export default {
     const newSub = reactive({
       name: "",
       url: "",
+      include: "",
+      exclude: "",
     });
     // 获取订阅
     const getSubscribes = () => {
@@ -85,8 +110,12 @@ export default {
             ...v,
             showname: true,
             showurl: true,
+            showinclude: true,
+            showexclude: true,
             editname: v.name,
             editurl: v.url,
+            editinclude: v.include,
+            editexclude: v.exclude,
           };
         });
         subscribes.push(...tmp);
@@ -105,6 +134,8 @@ export default {
           params: {
             name: newSub.name,
             url: newSub.url,
+            include: newSub.include,
+            exclude: newSub.exclude,
           },
         })
         .then(() => {
@@ -112,11 +143,17 @@ export default {
             ...newSub,
             editname: newSub.name,
             editurl: newSub.url,
+            editinclude: newSub.include,
+            editexclude: newSub.exclude,
             showname: true,
             showurl: true,
+            showinclude: true,
+            showexclude: true,
           });
           newSub.name = "";
           newSub.url = "";
+          newSub.include = "";
+          newSub.exclude = "";
         });
     };
     // 保存订阅修改
@@ -126,13 +163,19 @@ export default {
           params: {
             name: subscribes[i].editname,
             url: subscribes[i].editurl,
+            include: subscribes[i].editinclude,
+            exclude: subscribes[i].editexclude,
           },
         })
         .then(() => {
           subscribes[i].name = subscribes[i].editname;
           subscribes[i].url = subscribes[i].editurl;
+          subscribes[i].include = subscribes[i].editinclude;
+          subscribes[i].exclude = subscribes[i].editexclude;
           subscribes[i].showname = true;
           subscribes[i].showurl = true;
+          subscribes[i].showinclude = true;
+          subscribes[i].showexclude = true;
         });
     };
     // 删除订阅
@@ -173,6 +216,12 @@ export default {
 <style lang="less" scoped>
 table {
   margin-bottom: 16px;
+  td {
+    &:nth-child(3) {
+      word-break: break-all;
+      word-wrap: break-word;
+    }
+  }
 }
 @media screen and (max-width: 768px) {
   .content {
